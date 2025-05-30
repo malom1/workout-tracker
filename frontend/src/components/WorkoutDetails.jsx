@@ -1,5 +1,7 @@
 import { useWorkoutsContext} from '../hooks/useWorkoutsContext'
 
+//date fns
+
 const WorkoutDetails = ({ workout }) => {
 
     const { dispatch } = useWorkoutsContext()
@@ -21,7 +23,7 @@ const WorkoutDetails = ({ workout }) => {
             <p><strong>Load (lbs): </strong>{workout.load}</p>
             <p><strong>Reps: </strong>{workout.reps}</p>
             <p>{workout.createdAt}</p>
-            <span onClick={handleClick}>Delete</span>
+            <span className='material-symbols-outlined' onClick={handleClick}>Delete</span>
         </div>
     )
 }
