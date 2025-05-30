@@ -1,13 +1,30 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
+
+const muscleGroups = [
+  "abdominals", "biceps", "chest", "glutes", "hamstrings", "lats", "quadriceps", "triceps", "calves", "shoulders", "traps", "forearms"
+]
 
 
 const WorkoutForm = () => {
     const { dispatch } = useWorkoutsContext()
+    const [muscle, setMuscle] = useState('')
+    const [exercises, setExercises] = useState([])
     const [title, setTitle] = useState('')
     const [load, setLoad] = useState('')
     const [reps, setReps] = useState('')
     const [error, setError] = useState(null)
+
+    useEffect(() => {
+        if (muscle) {
+            fetch(`/api/exercises?muscle=${muscle}`)
+                .then(res => res.json())
+                .then(data => setExercises([data]))
+                .catch(() => setExercises([]))
+        } else {
+            setExercises([])
+        }
+    }, [muscle])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -42,12 +59,21 @@ const WorkoutForm = () => {
         <form className="create" onSubmit={handleSubmit}>
             <h3>Add a New Workout</h3>
 
-            <label>Exercise Title: </label>
-            <input 
-                type="text"
-                onChange={(e) => setTitle(e.target.value)}
-                value={title}
-            />
+            <label>Muscle Group: </label>
+            <select value={muscle} onChange={e => setMuscle(e.target.value)}>
+                <option value="">Select muscle</option>
+                {muscleGroups.map(m => (
+                    <option key={m} value={m}>{m.charAt(0).toUpperCase() + m.slice(1)}</option>
+                ))}
+            </select>
+
+            <label>Exercise: </label>
+            <select value={title} onChange={e => setTitle(e.target.value)} disabled={!exercises.length}>
+                <option value="">Select exercise</option>
+                {exercises.map(ex => (
+                    <option key={ex.name} value={ex.name}>{ex.name}</option>
+                ))}
+            </select>
 
             <label>Load (lbs): </label>
             <input 
